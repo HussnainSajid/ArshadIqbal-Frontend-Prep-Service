@@ -14,7 +14,7 @@ import { iconSubset } from './icons/icon-subset';
     imports: [RouterOutlet]
 })
 export class AppComponent implements OnInit {
-  title = 'CoreUI Angular Admin Template';
+  title = 'Prep Service - Admin Template';
 
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   readonly #colorModeService = inject(ColorModeService);
   readonly #iconSetService = inject(IconSetService);
 
-  constructor() {
+  constructor(private router: Router) {
     this.#titleService.setTitle(this.title);
     // iconSet singleton
     this.#iconSetService.icons = { ...iconSubset };
@@ -33,6 +33,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      this.router.navigate(['/login']); // Redirect to login if not authenticated
+    }
 
     this.#router.events.pipe(
         takeUntilDestroyed(this.#destroyRef)

@@ -178,12 +178,12 @@ export const navItems: INavData[] = [
   },
   {
     name: "Admin Panel",
-    url: "/base",
+    url: "/prepService",
     icon: "nav-icon fas fa-cogs", // Admin panel icon
     children: [
       {
         name: "User Management",
-        url: "/base/accordion",
+        url: "/prepService/admin-panel/register-user",
         icon: "nav-icon-bullet"
       },
       {

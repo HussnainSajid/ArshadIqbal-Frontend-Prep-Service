@@ -12,7 +12,7 @@
                   <span cInputGroupText>
                     <svg cIcon name="cilUser"></svg>
                   </span>
-                  <input autoComplete="username" cFormControl placeholder="Username" />
+                  <input autoComplete="email" [(ngModel)]="email" name="email" cFormControl placeholder="Email" />
                 </c-input-group>
                 <c-input-group class="mb-4">
                   <span cInputGroupText>
@@ -23,11 +23,12 @@
                     cFormControl
                     placeholder="Password"
                     type="password"
+                    [(ngModel)]="password" name="password"
                   />
                 </c-input-group>
                 <c-row>
                   <c-col xs="6">
-                    <button cButton class="px-4" color="primary">
+                    <button cButton class="px-4" color="primary" (click)="loginUser()">
                       Login
                     </button>
                   </c-col>
@@ -43,14 +44,13 @@
           <c-card [ngStyle]="{'minWidth.%': 44}" class="text-white bg-primary py-5">
             <c-card-body class="text-center">
               <div>
-                <h2>Sign up</h2>
+                <!-- <h2>Sign up</h2> -->
                 <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                  tempor incididunt ut labore et dolore magna aliqua.
+                  Our web prep service streamlines essential business operations for your Prep Center, including inventory management, product fulfillment, returns, warehouse storage, rate tariffs, invoicing, billing, and subscription-based models. We also handle client onboarding, investor funding, and other critical processes, ensuring seamless efficiency and scalability for your business.
                 </p>
-                <button [active]="true" cButton class="mt-3" color="primary" routerLink="/register">
+                <!-- <button [active]="true" cButton class="mt-3" color="primary" routerLink="/register">
                   Register Now!
-                </button>
+                </button> -->
               </div>
             </c-card-body>
           </c-card>

@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 import {
   AvatarComponent,
@@ -44,9 +44,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor() {
+  constructor(private router: Router) {
     super();
   }
 
   sidebarId = input('sidebar1');
+  logoutUser(){
+    localStorage.removeItem('token');
+    this.router.navigate(['/login']);
+  }
 }
