@@ -1,0 +1,175 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Users List</strong>
+        <button cButton color="primary" variant="outline" shape="rounded-pill" (click)="openUserModal(false)"
+          style="float: right;">
+          <i class="fa fa-user" style="margin-right: 10px;"></i>New User
+        </button>
+      </c-card-header>
+      <c-card-body>
+        <table [striped]="true" cTable>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Full Name</th>
+              <th scope="col">Phone Number</th>
+              <th scope="col">Email</th>
+              <th scope="col">Address</th>
+              <th scope="col">Role</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="usersList.length === 0">
+              <td colspan="7" class="text-center"><strong>No Records Found</strong></td>
+            </tr>
+            <tr *ngFor="let user of usersList; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ user.firstName }} {{ user.lastName }}</td>
+              <td>{{ user.phoneNumber }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.address }}</td>
+              <td>{{ user.role }}</td>
+              <td style="cursor: pointer !important;">
+                <i [cPopoverTrigger]="'hover'" cPopover="Edit User" class="fa fa-edit text-warning"
+                  (click)="editUserData(user)"></i>
+                <i [cPopoverTrigger]="'hover'" cPopover="Delete User" class="fa fa-trash text-danger"
+                  (click)="deleteUserData(user)"></i>
+              </td>
+            </tr>
+          </tbody>
+
+        </table>
+        <!-- Pagination (Only show if totalPages > 0) -->
+        <ng-container *ngIf="totalPages > 0">
+
+          <c-pagination aria-label="Page navigation" style="float: right !important; cursor: pointer !important;">
+            <!-- Previous Button -->
+            <li cPageItem [class.disabled]="pagination.PageNumber === 1">
+              <a cPageLink (click)="changePage(pagination.PageNumber - 1)">Previous</a>
+            </li>
+
+            <!-- Dynamic Page Numbers -->
+            <li cPageItem *ngFor="let page of [].constructor(totalPages); let i = index"
+              [class.active]="pagination.PageNumber === i + 1">
+              <a cPageLink (click)="changePage(i + 1)">{{ i + 1 }}</a>
+            </li>
+
+            <!-- Next Button -->
+            <li cPageItem [class.disabled]="pagination.PageNumber === totalPages">
+              <a cPageLink (click)="changePage(pagination.PageNumber + 1)">Next</a>
+            </li>
+          </c-pagination>
+        </ng-container>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal id="usersModal" backdrop="static" size="lg" [visible]="visible"
+  (visibleChange)="handleUsersModalChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle>{{ modalTitle }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="registerUserForm">
+      <div class="row">
+        <div class="col-4">
+          <div class="mb-3">
+            <label cLabel for="firstName">First Name</label>
+            <input cFormControl id="id" formControlName="id" type="hidden" />
+            <input cFormControl id="firstName" formControlName="firstName" placeholder="First Name" type="text" />
+            <small style="color: red"
+              *ngIf="registerUserForm.get('firstName')?.invalid && registerUserForm.get('firstName')?.touched">
+              First name is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="mb-3">
+            <label cLabel for="lastName">Last Name</label>
+            <input cFormControl id="lastName" formControlName="lastName" placeholder="Last Name" type="text" />
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="mb-3">
+            <label cLabel for="email">Email address</label>
+            <input cFormControl id="email" formControlName="email" placeholder="name@example.com" type="email" />
+            <small style="color: red"
+              *ngIf="registerUserForm.get('email')?.invalid && registerUserForm.get('email')?.touched">
+              Enter a valid email address.
+            </small>
+          </div>
+        </div>
+
+        <div class="col-3">
+          <div class="mb-3">
+            <label cLabel for="phoneNumber">Phone Number</label>
+            <input cFormControl id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" type="text" />
+            <small style="color: red"
+              *ngIf="registerUserForm.get('phoneNumber')?.invalid && registerUserForm.get('phoneNumber')?.touched">
+              Phone number is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="col-3">
+          <div class="mb-3">
+            <label cLabel for="userRole">User Role</label>
+            <select aria-label="Default select example" cSelect cFormControl id="role" formControlName="role">
+              <option value="">Select Role</option>
+              <option *ngFor="let role of userRoles" [value]="role.name">{{ role.name }}</option>
+            </select>
+            <small style="color: red"
+              *ngIf="registerUserForm.get('userRole')?.invalid && registerUserForm.get('userRole')?.touched">
+              User role is required.
+            </small>
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="mb-3">
+            <label cLabel for="address">Address</label>
+            <input cFormControl id="address" formControlName="address" placeholder="Enter address" type="text" />
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="mb-3">
+            <label cLabel for="password">Password</label>
+            <input cFormControl id="password" formControlName="password" placeholder="Enter password" type="password" />
+            <small style="color: red"
+              *ngIf="registerUserForm.get('password')?.invalid && registerUserForm.get('password')?.touched">
+              Password is required and must be at least 6 characters.
+            </small>
+          </div>
+        </div>
+
+        <div class="col-4">
+          <div class="mb-3">
+            <label cLabel for="confirmPassword">Confirm Password</label>
+            <input cFormControl id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm password"
+              type="password" />
+            <small style="color: red"
+              *ngIf="registerUserForm.get('confirmPassword')?.invalid && registerUserForm.get('confirmPassword')?.touched">
+              Confirm password is required.
+            </small>
+            <small style="color: red"
+              *ngIf="registerUserForm.get('password')?.value !== registerUserForm.get('confirmPassword')?.value">
+              Passwords do not match.
+            </small>
+          </div>
+        </div>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button (click)="closeUserModal()" cButton color="secondary">Close</button>
+    <button type="submit" cButton color="primary" [disabled]="registerUserForm.invalid"
+      (click)="saveUsersData()">Save</button>
+  </c-modal-footer>
+</c-modal>

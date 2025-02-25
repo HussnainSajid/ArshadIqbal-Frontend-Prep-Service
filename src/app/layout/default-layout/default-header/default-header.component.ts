@@ -4,7 +4,6 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 
 import {
   AvatarComponent,
-  BadgeComponent,
   BreadcrumbRouterComponent,
   ColorModeService,
   ContainerComponent,
@@ -23,11 +22,15 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { ApiService } from '../../../services/api.service';
+import { SwalService } from '../../../services/swal.service';
+import { UsersDto } from '../../../dto/UsersDto';
+import { LoaderService } from '../../../services/loader.service';
 
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, BadgeComponent, DropdownDividerDirective]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavItemComponent, NavLinkDirective, RouterLink, RouterLinkActive, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective, DropdownDividerDirective]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
 
@@ -38,19 +41,66 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { name: 'light', text: 'Light', icon: 'cilSun' },
     { name: 'dark', text: 'Dark', icon: 'cilMoon' }
   ];
+  userDetails: UsersDto | null = null;
 
   readonly icons = computed(() => {
     const currentMode = this.colorMode();
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor(private router: Router) {
+  constructor(private apiService: ApiService, private swalService: SwalService, private loaderService: LoaderService, private router: Router) {
     super();
   }
 
   sidebarId = input('sidebar1');
-  logoutUser(){
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+
+  verifyJwtToken() {
+    this.loaderService.show();
+    this.apiService.verifyJwtToken().subscribe({
+      next: (response) => {
+        if (response?.body?.success) {
+          // ✅ Assign user details correctly
+          this.userDetails = response.body.response.user;
+
+          if (this.userDetails) {
+
+            // ✅ Call verifyJwtToken() only if the current route is '/dashboard'
+            if (this.router.url === '/dashboard') {
+              this.swalService.showAlert(
+                "Success!",
+                "success",
+                `Welcome, ${this.userDetails.firstName} ${this.userDetails.lastName}`
+              );
+            }
+            this.loaderService.hide();
+          }
+        } else {
+          this.loaderService.hide();
+          this.swalService.showAlert("Error!", "error", "Failed to fetch user details.");
+          // Navigate to login
+          this.router.navigate(['/']);
+        }
+      },
+      error: () => {
+        this.loaderService.hide();
+        this.swalService.showAlert("Error!", "error", "Error fetching user detail.");
+        // Navigate to login
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
+
+  ngOnInit() {
+    this.verifyJwtToken();
+  }
+
+  logoutUser() {
+    this.loaderService.show();
+
+    setTimeout(() => {
+      this.apiService.logout();
+      this.loaderService.hide();
+    }, 1000); // 1000ms = 1 second
   }
 }

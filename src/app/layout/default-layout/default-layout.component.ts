@@ -8,11 +8,8 @@ import {
   ShadowOnScrollDirective,
   SidebarBrandComponent,
   SidebarComponent,
-  SidebarFooterComponent,
   SidebarHeaderComponent,
-  SidebarNavComponent,
-  SidebarToggleDirective,
-  SidebarTogglerDirective
+  SidebarNavComponent
 } from '@coreui/angular';
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
@@ -37,9 +34,6 @@ function isOverflown(element: HTMLElement) {
         IconDirective,
         NgScrollbar,
         SidebarNavComponent,
-        SidebarFooterComponent,
-        SidebarToggleDirective,
-        SidebarTogglerDirective,
         DefaultHeaderComponent,
         ShadowOnScrollDirective,
         ContainerComponent,

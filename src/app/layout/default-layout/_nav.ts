@@ -173,22 +173,22 @@ export const navItems: INavData[] = [
     ]
   },
   {
-    name: "Manage Hub",
+    name: "Admin Panel",
     title: true
   },
   {
     name: "Admin Panel",
-    url: "/prepService",
+    url: "/manage-hub",
     icon: "nav-icon fas fa-cogs", // Admin panel icon
     children: [
       {
         name: "User Management",
-        url: "/prepService/admin-panel/register-user",
+        url: "/manage-hub/register-user",
         icon: "nav-icon-bullet"
       },
       {
         name: "Rate Tariff Management",
-        url: "/base/breadcrumbs",
+        url: "/manage-hub/rates-tariff",
         icon: "nav-icon-bullet"
       },
       {

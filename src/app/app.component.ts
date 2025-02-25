@@ -3,15 +3,44 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { delay, filter, map, tap } from 'rxjs/operators';
-
 import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
+import { LoaderService } from './services/loader.service';
+import { CommonModule } from '@angular/common'; // ✅ Import CommonModule
 
 @Component({
     selector: 'app-root',
-    template: '<router-outlet />',
-    imports: [RouterOutlet]
+    template: `<router-outlet></router-outlet>
+    <div *ngIf="isLoading | async" class="loading-overlay">
+      <div class="spinner"></div>
+    </div>`,
+    imports: [RouterOutlet, CommonModule],
+    styles: [`
+      .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid #fff;
+        border-top: 5px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    `]
 })
 export class AppComponent implements OnInit {
   title = 'Prep Service - Admin Template';
@@ -24,13 +53,14 @@ export class AppComponent implements OnInit {
   readonly #colorModeService = inject(ColorModeService);
   readonly #iconSetService = inject(IconSetService);
 
-  constructor(private router: Router) {
+  constructor(private loaderService: LoaderService, private router: Router) {
     this.#titleService.setTitle(this.title);
     // iconSet singleton
     this.#iconSetService.icons = { ...iconSubset };
     this.#colorModeService.localStorageItemName.set('coreui-free-angular-admin-template-theme-default');
     this.#colorModeService.eventName.set('ColorSchemeChange');
   }
+  isLoading = this.loaderService.loading$;
 
   ngOnInit(): void {
 

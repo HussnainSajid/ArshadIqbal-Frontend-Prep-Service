@@ -18,8 +18,8 @@ export const routes: Routes = [
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes),
       },
       {
-        path: 'prepservice',
-        loadChildren: () => import('./views/prepService/admin-panel/routes').then((m) => m.routes)
+        path: 'manage-hub',
+        loadChildren: () => import('./views/manage-hub/routes').then((m) => m.routes)
       },
     ]
   },
